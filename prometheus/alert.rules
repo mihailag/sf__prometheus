@@ -1,0 +1,29 @@
+groups: 
+- name: example
+  rules:
+  - alert: BlackboxProbeHttpFailure
+    expr: probe_http_status_code != 200
+    for: 0m
+    labels:
+      severity: critical
+    annotations:
+      summary: Blackbox probe HTTP failure (instance {{ $labels.instance }})
+      description: "HTTP status code is not 200\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+
+  - alert: BlackboxSlowProbe
+    expr: probe_duration_seconds > 5
+    for: 0m
+    labels:
+      severity: warning
+    annotations:
+      summary: Blackbox slow probe (instance {{ $labels.instance }})
+      description: "Blackbox probe took more than 5s to complete\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+  
+  - alert: NodeRestarted
+    expr: time() - node_boot_time_seconds < 60
+    for: 0m
+    labels:
+      severity: critical
+    annotations:
+      summary: Node restarted (instance {{ $labels.instance }})
+      description: "Node has just been restarted, less than one minute ago on\n {{ $labels.instance }}"
